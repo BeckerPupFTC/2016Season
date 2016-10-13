@@ -1,0 +1,68 @@
+import com.android.build.gradle.AppExtension
+
+apply plugin: 'com.android.application'
+
+def extension = android {
+    signingConfigs {
+        release {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('libs/ftc.debug.keystore')
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+        debug  {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 19
+    }
+    compileSdkVersion 19
+    buildToolsVersion '21.1.2'
+}
+extension
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs 'out'
+        }
+    }
+}
+
+dependencies {
+    compile(name: 'RobotCore-release', ext: 'aar')
+    compile(name: 'Hardware-release', ext: 'aar')
+    compile(name: 'FtcCommon-release', ext: 'aar')
+    compile(name: 'ModernRobotics-release', ext: 'aar')
+    compile(name: 'Analytics-release', ext: 'aar')
+    compile(name: 'WirelessP2p-release', ext: 'aar')
+    //compile(name: 'ftc.debug(1).keystore', ext: 'keystore')
+}

@@ -1,259 +1,170 @@
-/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted (subject to the limitations in the disclaimer below) provided that
-the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list
-of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-Neither the name of Qualcomm Technologies Inc nor the names of its contributors
-may be used to endorse or promote products derived from this software without
-specific prior written permission.
-
-NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
-LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.qualcomm.ftcrobotcontroller.opmodes;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.Servo;
+//import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+//import com.qualcomm.robotcore.hardware.ServoController;
+abstract public class MyThreads implements Runnable
+{
+  Thread thread;
 
-import org.swerverobotics.library.SynchronousOpMode;
-import org.swerverobotics.library.interfaces;
-/**
- * TeleOp Mode
- * <p>
- * Enables control of the robot via the gamepade
- *
- */
+  MyThreads(String name) {
+    thread = new Thread(this, name);
+  }
+  public void begin()
+  {
+    start();
+  }
+  public void run()
+  {
+    while (opModeIsActive)
+    {
+      check();
+      idle();
+    }
+  }
+  abstract public void check();
+}
 
-@TeleOp(name="NxtTeleop" )
-public class NxtTeleOp extends SynchronousOpMode {
+public class LauncherThread extends MyThreads
+{
+  public void check()
+  {
+    //shooter
+    if (gamepad2.x)
+    {
+      //float velocity;
+      //velocity = 1;
+      /* Note: must set velocity to a predetermined constant or
+       * somehow use a stick to set velocity to the correct speed
+       * for a certain distance. I don't know if 1 is maximum
+       * power, but I'm just using that for now. If you're going to
+       * use the gamepad to control velocity, I'll need help.
+       */
+      //launcher.setPower(velocity);
+      //long motorTime = 500L; //Just a guess.
+      dropBallIntoLauncher();
+      /* Just giving it its own method because I don't know exactly
+       * how to code dropping the ball into the launcher.
+       */
+      //Thread.sleep(motorTime);
+    }
+  }
+  public void dropBallIntoLauncher()
+  {
+    /* Sounds like this will be nothing other than the conveyor belt moving,
+     * so I may have to redo the launcher section. See comment at top.
+     */
+    launcher.setPower(1);
+    rotor.setTargetPosition(rotor.getPosition());
+    rotor.setPower(0.5);
+    while (rotor.isBusy()){}
+    rotor.setPower(0);
+    launcher.setPower(0);
+  }
+}
+//public class LauncherAngleThread extends MyThreads /
+//{
+//   public void check()
+//   {
+//      float angle;
+//      angle = gamepad2.left_stick_y;
+//      /* Note: this angle variable probably needs to be scaled up
+//      * or down in order to set the launcherAngle correctly.
+//      */
+//      launcherAngle.setPosition(angle);
+//   }
+   //}
 
-  // position of the claw servo
-  double clawPosition;
+//public class ConveyorThread extends MyThreads
+// {
+//  /* Note: may be taking out ConveyorThread because depending on whether or
+//  * not the conveyor is always on.
+//   */
+//  public void check()
+//  {
+//    //conveyor
+//    if (gamepad1.x)
+//    {
+//      conveyor.setPower(0.6);
+//    }
+//    if (gamepad1.b)
+//    {
+//      conveyor.setPower(0);
+//    }
+//  }
+//}
+public class WheelsThread extends MyThreads
+{
+  public void check()
+  {
+    //wheels
+    float throttle = -gamepad1.left_stick_y;
+    float direction = gamepad1.left_stick_x;
+    float right = throttle - direction;
+    float left = throttle + direction;
+    wheelR.setPower(right);
+    wheelL.setPower(left);
+  }
+}
 
-  // amount to change the claw servo position by
-  double clawDelta = 0.01;
-
-  // position of the wrist servo
-  double wristPosition;
-
-  // amount to change the wrist servo position by
-  double wristDelta = 0.01;
-
-  DcMotorController.DeviceMode devMode;
+@TeleOp(name = "remote control code")
+public class Robot_runner extends LinearOpMode
+{
   DcMotorController wheelController;
-  DcMotor motorRight;
-  DcMotor motorLeft;
-//servos
-  Servo claw;
-  Servo wrist;
-
-  int numOpLoops = 1;
-
-  /*
-   * Code to run when the op mode is first enabled goes here
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
-   */
+  DcMotorController otherController;
+  DcMotor wheelR;
+  DcMotor wheelL;
+  //DcMotor conveyor;  // Will the intake brush also be wired to this?
+  DcMotor launcher;
+  //Servo launcherAngle;
+  DcMotor rotor;
+  rotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
   @Override
-  public void init() {
-    motorRight = hardwareMap.dcMotor.get("motor_2");
-    motorLeft = hardwareMap.dcMotor.get("motor_1");
-    claw = hardwareMap.servo.get("servo_6"); // channel 6
-    wrist = hardwareMap.servo.get("servo_1"); // channel 1
+  public void runOpMode()
+  {
+    wheelController = hardwareMap.dcMotorController.get("motor controller 1");
+    wheelR = hardwareMap.dcMotor.get("motor 1");
+    wheelL = hardwareMap.dcMotor.get("motor 2")
 
-    wheelController = hardwareMap.dcMotorController.get("wheels");
-  }
+    otherController = hardwareMap.dcMotorController.get("motor controller 2");
+    //conveyor = hardwareMap.dcMotor.get("motor 3");
+    rotor = hardwareMap.dcMotor.get("motor 3");
+    launcher = hardwareMap.dcMotor.get("motor 4");
 
-  /*
-   * Code that runs repeatedly when the op mode is first enabled goes here
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init_loop()
-   */
-  @Override
-  public void init_loop() {
+    //launcherAngle = hardwareMap.servo.get("servo 1");
 
-    devMode = DcMotorController.DeviceMode.WRITE_ONLY;
+    LauncherThread launcher_check = new LauncherThread("launcher checker");
+    LauncherAngleThread launcher_angle_check = new LauncherAngleThread("launcher angle checker");
+    ConveyorThread conveyor_check = new ConveyorThread("conveyor checker");
+    WheelsThread wheels_check = new WheelsThread("wheel checker");
 
-    motorRight.setDirection(DcMotor.Direction.REVERSE);
-    //motorLeft.setDirection(DcMotor.Direction.REVERSE);
+    waitForStart();
 
-    // set the mode
-    // Nxt devices start up in "write" mode by default, so no need to switch device modes here.
-    motorLeft.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-    motorRight.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+    conveyor.setPower(0.6);
 
-    wristPosition = 0.6;
-    clawPosition = 0.5;
-  }
-
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-
-    // The op mode should only use "write" methods (setPower, setMode, etc) while in
-    // WRITE_ONLY mode or SWITCHING_TO_WRITE_MODE
-    if (allowedToWrite()) {
-    /*
-     * Gamepad 1
-     *
-     * Gamepad 1 controls the motors via the left stick, and it controls the wrist/claw via the a,b,
-     * x, y buttons
-     */
-
-      if (gamepad1.dpad_left) {
-        // Nxt devices start up in "write" mode by default, so no need to switch modes here.
-        motorLeft.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        motorRight.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-      }
-      if (gamepad1.dpad_right) {
-        // Nxt devices start up in "write" mode by default, so no need to switch modes here.
-        motorLeft.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorRight.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-      }
-
-      // throttle:  left_stick_y ranges from -1 to 1, where -1 is full up,  and 1 is full down
-      // direction: left_stick_x ranges from -1 to 1, where -1 is full left and 1 is full right
-      float throttle = -gamepad1.left_stick_y;
-      float direction = gamepad1.left_stick_x;
-      float right = throttle - direction;
-      float left = throttle + direction;
-
-      // clip the right/left values so that the values never exceed +/- 1
-      right = Range.clip(right, -1, 1);
-      left = Range.clip(left, -1, 1);
-
-      // write the values to the motors
-      motorRight.setPower(right);
-      motorLeft.setPower(left);
-
-      // update the position of the wrist
-      if (gamepad1.a) {
-        wristPosition -= wristDelta;
-      }
-
-      if (gamepad1.y) {
-        wristPosition += wristDelta;
-      }
-
-      // update the position of the claw
-      if (gamepad1.x) {
-        clawPosition -= clawDelta;
-      }
-
-      if (gamepad1.b) {
-        clawPosition += clawDelta;
-      }
-
-      // clip the position values so that they never exceed 0..1
-      wristPosition = Range.clip(wristPosition, 0, 1);
-      clawPosition = Range.clip(clawPosition, 0, 1);
-
-      // write position values to the wrist and claw servo
-      wrist.setPosition(wristPosition);
-      claw.setPosition(clawPosition);
-
-    /*
-     * Gamepad 2
-     *
-     * Gamepad controls the motors via the right trigger as a throttle, left trigger as reverse, and
-     * the left stick for direction. This type of control is sometimes referred to as race car mode.
-     */
-
-      // we only want to process gamepad2 if someone is using one of it's analog inputs. If you always
-      // want to process gamepad2, remove this check
-      if (gamepad2.atRest() == false) {
-
-        // throttle is taken directly from the right trigger, the right trigger ranges in values from
-        // 0 to 1
-        throttle = gamepad2.right_trigger;
-
-        // if the left trigger is pressed, go in reverse
-        if (gamepad2.left_trigger != 0.0) {
-          throttle = -gamepad2.left_trigger;
-        }
-
-        // assign throttle to the left and right motors
-        right = throttle;
-        left = throttle;
-
-        // now we need to apply steering (direction). The left stick ranges from -1 to 1. If it is
-        // negative we want to slow down the left motor. If it is positive we want to slow down the
-        // right motor.
-        if (gamepad2.left_stick_x < 0) {
-          // negative value, stick is pulled to the left
-          left = left * (1 + gamepad2.left_stick_x);
-        }
-        if (gamepad2.left_stick_x > 0) {
-          // positive value, stick is pulled to the right
-          right = right * (1 - gamepad2.left_stick_x);
-        }
-
-        // write the values to the motor. This will over write any values placed while processing gamepad1
-        motorRight.setPower(right);
-        motorLeft.setPower(left);
-      }
+    launcher_check.begin();
+    //launcher_angle_check.begin();
+    conveyor_check.begin();
+    wheels_check.begin();
+    try
+    {
+      launcher_check.thread.join();
+      conveyor_check.thread.join();
+      wheels_check.thread.join();
+      //launcher_angle_check.join();
     }
-
-    // To read any values from the NXT controllers, we need to switch into READ_ONLY mode.
-    // It takes time for the hardware to switch, so you can't switch modes within one loop of the
-    // op mode. Every 17th loop, this op mode switches to READ_ONLY mode, and gets the current power.
-    if (numOpLoops % 17 == 0){
-      // Note: If you are using the NxtDcMotorController, you need to switch into "read" mode
-      // before doing a read, and into "write" mode before doing a write. This is because
-      // the NxtDcMotorController is on the I2C interface, and can only do one at a time. If you are
-      // using the USBDcMotorController, there is no need to switch, because USB can handle reads
-      // and writes without changing modes. The NxtDcMotorControllers start up in "write" mode.
-      // This method does nothing on USB devices, but is needed on Nxt devices.
-      wheelController.setMotorControllerDeviceMode(DcMotorController.DeviceMode.READ_ONLY);
+    catch (InterruptedException e)
+    {
+      telemetry.addData("For some reason one of the calls to join failed.");
+      telemetry.addData("This might mean nothing, but then again, it might mean that");
+      telemetry.addData("The program will stop suddenly and unexpectedly in the middle");
+      telemetry.addData("of a match, requiring you to restart and thus consuming valuable time.");
+      telemetry.addData("Also, the robot may not function correctly due to parts being in a");
+      telemetry.addData("nonzero position.\n");
+      telemetry.addData("Bummer, huh?");
+      telemetry.update;
     }
-
-    // Every 17 loops, switch to read mode so we can read data from the NXT device.
-    // Only necessary on NXT devices.
-    if (wheelController.getMotorControllerDeviceMode() == DcMotorController.DeviceMode.READ_ONLY) {
-
-      // Update the reads after some loops, when the command has successfully propagated through.
-      telemetry.addData("Text", "free flow text");
-      telemetry.addData("left motor", motorLeft.getPower());
-      telemetry.addData("right motor", motorRight.getPower());
-      telemetry.addData("RunMode: ", motorLeft.getMode().toString());
-
-      // Only needed on Nxt devices, but not on USB devices
-      wheelController.setMotorControllerDeviceMode(DcMotorController.DeviceMode.WRITE_ONLY);
-
-      // Reset the loop
-      numOpLoops = 0;
-    }
-
-    // Update the current devMode
-    devMode = wheelController.getMotorControllerDeviceMode();
-    numOpLoops++;
-  }
-
-  // If the device is in either of these two modes, the op mode is allowed to write to the HW.
-  private boolean allowedToWrite(){
-    return (devMode == DcMotorController.DeviceMode.WRITE_ONLY);
   }
 }

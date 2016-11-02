@@ -44,6 +44,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class ColorSensorDriver extends LinearOpMode {
 
+  public enum ColorSensorDevice {ADAFRUIT, HITECHNIC_NXT, MODERN_ROBOTICS_I2C};
+
   public ColorSensorDevice device = ColorSensorDevice.MODERN_ROBOTICS_I2C;
 
   ColorSensor colorSensor;
@@ -56,7 +58,17 @@ public class ColorSensorDriver extends LinearOpMode {
     hardwareMap.logDevices();
 
     cdim = hardwareMap.deviceInterfaceModule.get("dim");
-    colorSensor = hardwareMap.colorSensor.get("mr");
+    switch (device) {
+      case HITECHNIC_NXT:
+        colorSensor = hardwareMap.colorSensor.get("nxt");
+        break;
+      case ADAFRUIT:
+        colorSensor = hardwareMap.colorSensor.get("lady");
+        break;
+      case MODERN_ROBOTICS_I2C:
+        colorSensor = hardwareMap.colorSensor.get("mr");
+        break;
+    }
     led = hardwareMap.led.get("led");
     t = hardwareMap.touchSensor.get("t");
 
@@ -68,8 +80,18 @@ public class ColorSensorDriver extends LinearOpMode {
     while (opModeIsActive()) {
 
       enableLed(t.isPressed());
-      Color.RGBToHSV(colorSensor.red()*8, colorSensor.green()*8, colorSensor.blue()*8, hsvValues);
 
+      switch (device) {
+        case HITECHNIC_NXT:
+          Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
+          break;
+        case ADAFRUIT:
+          Color.RGBToHSV((colorSensor.red() * 255) / 800, (colorSensor.green() * 255) / 800, (colorSensor.blue() * 255) / 800, hsvValues);
+          break;
+        case MODERN_ROBOTICS_I2C:
+          Color.RGBToHSV(colorSensor.red()*8, colorSensor.green()*8, colorSensor.blue()*8, hsvValues);
+          break;
+      }
       telemetry.addData("Clear", colorSensor.alpha());
       telemetry.addData("Red  ", colorSensor.red());
       telemetry.addData("Green", colorSensor.green());
@@ -86,6 +108,16 @@ public class ColorSensorDriver extends LinearOpMode {
   }
 
   private void enableLed(boolean value) {
-    colorSensor.enableLed(value);
+    switch (device) {
+      case HITECHNIC_NXT:
+        colorSensor.enableLed(value);
+        break;
+      case ADAFRUIT:
+        led.enable(value);
+        break;
+      case MODERN_ROBOTICS_I2C:
+        colorSensor.enableLed(value);
+        break;
+    }
   }
 }

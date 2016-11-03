@@ -62,13 +62,10 @@ public class LinearK9TeleOp extends LinearOpMode {
       motorRight.setPower(1);
       motorLeft.setPower(1);
 
-      sleep(500);
-
+      sleep(1000);
       motorRight.setPower(0);
       motorLeft.setPower(0);
-
-      sleep(2000);
-
+      sleep(10000);
       waitOneFullHardwareCycle();
     }
   }

@@ -1,4 +1,0 @@
-include ':SwerveRoboticsLibrary'
-include ':FtcRobotController'
-include ':YourCodeHere'
-include ':TeamCode'

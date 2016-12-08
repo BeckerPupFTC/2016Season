@@ -32,13 +32,12 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
+
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -54,74 +53,71 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="TeleOpOld2Players", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-@Disabled
-public class TeleOpOld2Players extends LinearOpMode {
+//@Disabled
+public class TeleOpOld2Players extends OpMode
+{
     DcMotor wheelR;
     DcMotor wheelL;
     DcMotor intake;
     DcMotor launcher;
     Servo intake_servo;
-    Servo beacon_presser;
-    ElapsedTime runtime;
-
+    //Servo beacon_presser;
     @Override
-    public void runOpMode() {
-        runtime = new ElapsedTime();
+    public void init() {
         wheelR = hardwareMap.dcMotor.get("wheelR");
         wheelL = hardwareMap.dcMotor.get("wheelL");
         intake = hardwareMap.dcMotor.get("launcher");
         launcher = hardwareMap.dcMotor.get("intake");
-        intake_servo = hardwareMap.servo.get("servo_1");
-        beacon_presser = hardwareMap.servo.get("servo_2");
+        intake_servo =  hardwareMap.servo.get("servo_1");
+        //beacon_presser = hardwareMap.servo.get("servo_2");
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
+    }
+    @Override
+    public void loop () {
+        //wheels
+        float throttle = -gamepad1.left_stick_y;
+        float direction = -gamepad1.left_stick_x;
+        float right = throttle - direction;
+        float left = throttle + direction;
+        wheelR.setPower(right);
+        wheelL.setPower(left);
 
         //intake
-        while (opModeIsActive()) {
+        if (gamepad2.x) {
+            intake.setPower(0.5);
+        }
+        if (gamepad2.b) {
+            intake.setPower(0);
+        }
 
-            //wheels
-            float throttle = -gamepad1.left_stick_y;
-            float direction = -gamepad1.left_stick_x;
-            float right = throttle - direction;
-            float left = throttle + direction;
-            wheelR.setPower(right);
-            wheelL.setPower(left);
-
-            if (gamepad1.x) {
-                intake.setPower(0.5);
-            }
-            if (gamepad1.b) {
-                intake.setPower(0);
-            }
-
-            //shooter
-            //if (gamepad1.a) {
+        //shooter
+        //if (gamepad2.a) {
             //wheelL.setPower(0);
             //wheelR.setPower(0);
-            //launcher.setPower(-0.28);
-            //runtime.reset();
-            //while (opModeIsActive && runtime.seconds() < 3) {}
-            //intake_servo.setPosition(1);
-            //runtime.reset();
-            //while (opModeIsActive && runtime.seconds() < 3) {}
-            //intake_servo.setPosition(0);
-            //launcher.setPower(0);
+            //intake.setPower(0);
+            //launcher.setPower(0.8);
+            //try {
+            //    java.lang.Thread.sleep(3000);
+            //    intake_servo.setPosition(1);
+            //    java.lang.Thread.sleep(3000);
+            //    intake_servo.setPosition(0);
+            //} catch (InterruptedException e) {
+            //    intake_servo.setPosition(0);
             //}
-            if (gamepad2.a) {
-                launcher.setPower(-0.28);
-            }
-            if (gamepad2.y) {
-                launcher.setPower(0);
-            }
-            if (gamepad2.dpad_up) {
-                intake_servo.setPosition(1);
-            }
-            if (gamepad2.dpad_down) {
-                intake_servo.setPosition(0);
-            }
-            if (gamepad2.left_bumper) {
-
-            }
+            //launcher.setPower(0);
+        //}
+        if (gamepad2.a) {
+            launcher.setPower(-0.28);
+        }
+        if (gamepad2.y) {
+            launcher.setPower(0);
+        }
+        if (gamepad2.dpad_up) {
+            intake_servo.setPosition(1);
+        }
+        if (gamepad2.dpad_down) {
+            intake_servo.setPosition(0);
         }
     }
 }

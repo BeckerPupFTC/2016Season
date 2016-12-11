@@ -47,16 +47,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoLaunch",group="Autonomous")
+@Autonomous(name="AutoLaunchVoltage",group="Autonomous")
 //@Disabled
-public class AutoLaunch extends LinearOpMode {
+public class AutoLaunchVoltage extends LinearOpMode {
    
 	 //initialization
+    DcMotorController launcherBox;
     DcMotor wheelR;
     DcMotor wheelL;
     DcMotor intake;
@@ -76,6 +78,8 @@ public class AutoLaunch extends LinearOpMode {
     {
         wheelR = hardwareMap.dcMotor.get("wheelR");
         wheelL = hardwareMap.dcMotor.get("wheelL");
+
+        launcherBox = hardwareMap.dcMotorController.get("Motor Controller 1");
         intake = hardwareMap.dcMotor.get("launcher");
         launcher = hardwareMap.dcMotor.get("intake");
         intake_servo =  hardwareMap.servo.get("servo_1");
@@ -84,7 +88,7 @@ public class AutoLaunch extends LinearOpMode {
 
         waitForStart();
 
-        launcher.setPower(-0.33);
+        launcher.setPower(getVPower());
 
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 6)) {
@@ -99,7 +103,7 @@ public class AutoLaunch extends LinearOpMode {
         }
 
         intake.setPower(0.5);
-        launcher.setPower(-0.32);
+        launcher.setPower((getVPower()-0.01));
 
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 6)) {
@@ -109,7 +113,10 @@ public class AutoLaunch extends LinearOpMode {
         intake_servo.setPosition(0);
         intake.setPower(0);
     }
+    public double getVPower() {
+        double voltage = hardwareMap.voltageSensor.get("Motor Controller 1").getVoltage();
+        double function = (1/voltage)*4;//rough approximation
+        return function;
+    }
 
 }
-//4995 encoder units/360 degrees
-/* 2pi inches for 1440 encoder units. 1 inch is 229.183 units */

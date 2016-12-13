@@ -30,12 +30,15 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This file illustrates the concept of driving up to a line and then stopping.
@@ -50,7 +53,7 @@ import com.qualcomm.robotcore.hardware.LightSensor;
  *   Setting the correct WHITE_THRESHOLD value is key to stopping correctly.
  *   This should be set half way between the light and dark values.
  *   These values can be read on the screen once the OpMode has been INIT, but before it is STARTED.
- *   Move the senso on asnd off the white line and not the min and max readings.
+ *   Move the sensor on and off the white line and not the min and max readings.
  *   Edit this code to make WHITE_THRESHOLD half way between the min and max.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
@@ -59,12 +62,15 @@ import com.qualcomm.robotcore.hardware.LightSensor;
 
 @Autonomous(name="Pushbot: Auto Drive To Line", group="Pushbot")
 @Disabled
-public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
+public class AutoDriveToLine extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
-                                                               // could also use HardwarePushbotMatrix class.
-    LightSensor             lightSensor;      // Primary LEGO Light sensor,
+    DcMotor rightMotor;
+    DcMotor leftMotor;
+    DcMotor intake;
+    DcMotor launcher;
+    Servo intake_servo;
+    LightSensor lightSensor;      // Primary LEGO Light sensor,
     // OpticalDistanceSensor   lightSensor;   // Alternative MR ODS sensor
 
     static final double     WHITE_THRESHOLD = 0.2;  // spans between 0.1 - 0.5 from dark to light
@@ -73,10 +79,13 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        /* Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
-        robot.init(hardwareMap);
+        rightMotor = hardwareMap.dcMotor.get("wheelR");
+        leftMotor = hardwareMap.dcMotor.get("wheelL");
+        intake = hardwareMap.dcMotor.get("launcher");
+        launcher = hardwareMap.dcMotor.get("intake");
+        intake_servo =  hardwareMap.servo.get("servo_1");
+        //beacon_presser = hardwareMap.servo.get("servo_2");
+        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -104,8 +113,8 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
-        robot.leftMotor.setPower(APPROACH_SPEED);
-        robot.rightMotor.setPower(APPROACH_SPEED);
+        leftMotor.setPower(APPROACH_SPEED);
+        rightMotor.setPower(APPROACH_SPEED);
 
         // run until the white line is seen OR the driver presses STOP;
         while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
@@ -116,7 +125,7 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
         }
 
         // Stop all motors
-        robot.leftMotor.setPower(0);
-        robot.rightMotor.setPower(0);
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
     }
 }

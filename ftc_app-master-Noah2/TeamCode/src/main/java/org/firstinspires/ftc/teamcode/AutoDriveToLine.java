@@ -123,12 +123,13 @@ public class AutoDriveToLine extends LinearOpMode {
 
             // Display the light level while we are waiting to start
             telemetry.addData("Light Level", lightSensor.getLightDetected());
+            telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.update();
             idle();
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
-        leftMotor.setPower(0.5);
+        leftMotor.setPower(0.48);
         rightMotor.setPower(0.4);
 
         double distanceThen;
@@ -148,17 +149,17 @@ public class AutoDriveToLine extends LinearOpMode {
                 telemetry.addData("previously:", distanceThen);
                 telemetry.addData("power: ", leftMotor.getPower());
                 telemetry.update();
-                if(distanceNow < 13.5) {
+                if(distanceNow < 11.5) {
                     if (distanceNow < distanceThen) {
                         level = level + 0.02;;
                     }
-                } else if(distanceNow > 14.5) {
+                } else if(distanceNow > 12.5) {
                     if (distanceNow > distanceThen) {
                         level = level - 0.02;
                     }
                 }
                 rightMotor.setPower(level);
-                sleep(100);
+                sleep(50);
             telemetry.addData("Light Level",  lightSensor.getLightDetected());
             telemetry.update();
         }
@@ -168,7 +169,7 @@ public class AutoDriveToLine extends LinearOpMode {
         rightMotor.setPower(0);
 
         beacon_presser.setPosition(0.34);
-        delay(r, 0.4);
+        delay(r, 1);
 
         double lightLevel = legoLightSensor.getLightDetected();
         leftMotor.setPower(-1);
@@ -176,17 +177,18 @@ public class AutoDriveToLine extends LinearOpMode {
         delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-        delay(r, 0.1);
+        delay(r, 1);
         if(legoLightSensor.getLightDetected() < lightLevel) {
             beacon_presser.setPosition(0.54);
             leftMotor.setPower(1);
             rightMotor.setPower(1);
-            delay(r, 0.4);
+            delay(r, 0.3);
             leftMotor.setPower(0);
             rightMotor.setPower(0);
         }
+        delay(r, 1);
         ru.reset();
-        while(opModeIsActive() && ru.seconds() < 4.4) {
+        while(opModeIsActive() && ru.seconds() < 2) {
             beacon_presser.setPosition(0.54);
             delay(r, 0.4);
             beacon_presser.setPosition(0.02);

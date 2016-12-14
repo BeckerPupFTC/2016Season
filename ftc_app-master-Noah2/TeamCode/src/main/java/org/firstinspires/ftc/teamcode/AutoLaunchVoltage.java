@@ -103,7 +103,7 @@ public class AutoLaunchVoltage extends LinearOpMode {
         }
 
         intake.setPower(0.5);
-        launcher.setPower((getVPower()-0.01));
+        launcher.setPower(((getVPower()-0.01)));
 
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 6)) {

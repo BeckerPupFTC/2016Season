@@ -64,7 +64,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="AwesomeAuto", group="Pushbot")
-@Disabled
+//@Disabled
 public class AwesomeAuto extends LinearOpMode {
 
     /* Declare OpMode members. */

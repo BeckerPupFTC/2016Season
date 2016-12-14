@@ -61,7 +61,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 @Autonomous(name="Pushbot: Auto Drive To Line", group="Pushbot")
-@Disabled
+//@Disabled
 public class AutoDriveToLine extends LinearOpMode {
 
     /* Declare OpMode members. */

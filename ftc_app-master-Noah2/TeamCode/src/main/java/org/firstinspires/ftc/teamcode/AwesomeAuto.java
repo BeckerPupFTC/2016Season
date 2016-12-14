@@ -137,6 +137,10 @@ public class AwesomeAuto extends LinearOpMode {
             idle();
         }
 
+        encoderDrive(18, 4);
+
+        encoderDrive(45);
+
         driveTillLine();    //drive to line
         if(colorSensor.red() > COLOR_THRESHOLD) {
             encoderDrive(4, 1.2);

@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 /**
  * This file illustrates the concept of driving up to a line and then stopping.
@@ -70,8 +71,8 @@ public class AutoDriveToLine extends LinearOpMode {
     DcMotor intake;
     DcMotor launcher;
     Servo intake_servo;
-    LightSensor lightSensor;      // Primary LEGO Light sensor,
-    // OpticalDistanceSensor   lightSensor;   // Alternative MR ODS sensor
+    //LightSensor lightSensor;      // Primary LEGO Light sensor,
+    OpticalDistanceSensor   lightSensor;   // Alternative MR ODS sensor
 
     static final double     WHITE_THRESHOLD = 0.2;  // spans between 0.1 - 0.5 from dark to light
     static final double     APPROACH_SPEED  = 0.5;
@@ -92,8 +93,8 @@ public class AutoDriveToLine extends LinearOpMode {
         // robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // get a reference to our Light Sensor object.
-        lightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
-        //  lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
+        //lightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
+        lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
 
         // turn on LED of light sensor.
         lightSensor.enableLed(true);

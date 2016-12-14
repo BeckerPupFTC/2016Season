@@ -72,7 +72,7 @@ public class WallFollower extends LinearOpMode {
         // wait for the start button to be pressed
         waitForStart();
 
-        wheelL.setPower(0.4);
+        wheelL.setPower(0.5);
         wheelR.setPower(0.4);
 
         double distanceThen;
@@ -88,11 +88,11 @@ public class WallFollower extends LinearOpMode {
             telemetry.update();
             if(distanceNow < 13.5) {
                 if (distanceNow < distanceThen) {
-                    level = level + 0.01;;
+                    level = level + 0.02;;
                 }
             } else if(distanceNow > 14.5) {
                 if (distanceNow > distanceThen) {
-                    level = level - 0.01;
+                    level = level - 0.02;
                 }
             }
             wheelR.setPower(level);

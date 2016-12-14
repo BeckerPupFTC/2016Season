@@ -37,9 +37,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.LegacyModule;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -63,7 +65,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive To Line", group="Pushbot")
+@Autonomous(name="RedBeacon", group="Pushbot")
 //@Disabled
 public class AutoDriveToLine extends LinearOpMode {
 
@@ -76,6 +78,8 @@ public class AutoDriveToLine extends LinearOpMode {
     Servo beacon_presser;
     LightSensor legoLightSensor;      // Primary LEGO Light sensor,
     OpticalDistanceSensor   lightSensor;   // Alternative MR ODS sensor
+    UltrasonicSensor rangeSensor;
+    LegacyModule board;
 
     ElapsedTime r = new ElapsedTime();
     ElapsedTime ru = new ElapsedTime();
@@ -93,6 +97,10 @@ public class AutoDriveToLine extends LinearOpMode {
         intake_servo =  hardwareMap.servo.get("servo_1");
         beacon_presser = hardwareMap.servo.get("servo_2");
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
+
+        rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
+        board = hardwareMap.legacyModule.get("Legacy Module 1");
+        board.enable9v(4, true);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -120,13 +128,37 @@ public class AutoDriveToLine extends LinearOpMode {
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
-        leftMotor.setPower(APPROACH_SPEED);
-        rightMotor.setPower(APPROACH_SPEED);
+        leftMotor.setPower(0.5);
+        rightMotor.setPower(0.4);
+
+        double distanceThen;
+        double distanceNow = 0;
+        double level = 0.4;
 
         // run until the white line is seen OR the driver presses STOP;
         while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
 
             // Display the light level while we are looking for the line
+
+
+
+                distanceThen = distanceNow;
+                distanceNow = rangeSensor.getUltrasonicLevel();
+                telemetry.addData("distance: ", distanceNow);
+                telemetry.addData("previously:", distanceThen);
+                telemetry.addData("power: ", leftMotor.getPower());
+                telemetry.update();
+                if(distanceNow < 13.5) {
+                    if (distanceNow < distanceThen) {
+                        level = level + 0.02;;
+                    }
+                } else if(distanceNow > 14.5) {
+                    if (distanceNow > distanceThen) {
+                        level = level - 0.02;
+                    }
+                }
+                rightMotor.setPower(level);
+                sleep(100);
             telemetry.addData("Light Level",  lightSensor.getLightDetected());
             telemetry.update();
         }
@@ -136,7 +168,7 @@ public class AutoDriveToLine extends LinearOpMode {
         rightMotor.setPower(0);
 
         beacon_presser.setPosition(0.34);
-        delay(r, 2);
+        delay(r, 0.4);
 
         double lightLevel = legoLightSensor.getLightDetected();
         leftMotor.setPower(-1);
@@ -144,7 +176,7 @@ public class AutoDriveToLine extends LinearOpMode {
         delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-        delay(r, 2);
+        delay(r, 0.1);
         if(legoLightSensor.getLightDetected() < lightLevel) {
             beacon_presser.setPosition(0.54);
             leftMotor.setPower(1);
@@ -153,7 +185,6 @@ public class AutoDriveToLine extends LinearOpMode {
             leftMotor.setPower(0);
             rightMotor.setPower(0);
         }
-        delay(r, 2);
         ru.reset();
         while(opModeIsActive() && ru.seconds() < 4.4) {
             beacon_presser.setPosition(0.54);

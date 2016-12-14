@@ -40,6 +40,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 /**
  * This file illustrates the concept of driving up to a line and then stopping.
@@ -71,8 +73,12 @@ public class AutoDriveToLine extends LinearOpMode {
     DcMotor intake;
     DcMotor launcher;
     Servo intake_servo;
-    //LightSensor lightSensor;      // Primary LEGO Light sensor,
+    Servo beacon_presser;
+    LightSensor legoLightSensor;      // Primary LEGO Light sensor,
     OpticalDistanceSensor   lightSensor;   // Alternative MR ODS sensor
+
+    ElapsedTime r = new ElapsedTime();
+    ElapsedTime ru = new ElapsedTime();
 
     static final double     WHITE_THRESHOLD = 0.2;  // spans between 0.1 - 0.5 from dark to light
     static final double     APPROACH_SPEED  = 0.5;
@@ -85,7 +91,7 @@ public class AutoDriveToLine extends LinearOpMode {
         intake = hardwareMap.dcMotor.get("launcher");
         launcher = hardwareMap.dcMotor.get("intake");
         intake_servo =  hardwareMap.servo.get("servo_1");
-        //beacon_presser = hardwareMap.servo.get("servo_2");
+        beacon_presser = hardwareMap.servo.get("servo_2");
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -93,7 +99,7 @@ public class AutoDriveToLine extends LinearOpMode {
         // robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // get a reference to our Light Sensor object.
-        //lightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
+        legoLightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
         lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
 
         // turn on LED of light sensor.
@@ -128,5 +134,39 @@ public class AutoDriveToLine extends LinearOpMode {
         // Stop all motors
         leftMotor.setPower(0);
         rightMotor.setPower(0);
+
+        beacon_presser.setPosition(0.34);
+        delay(r, 2);
+
+        double lightLevel = legoLightSensor.getLightDetected();
+        leftMotor.setPower(-1);
+        rightMotor.setPower(-1);
+        delay(r, 0.5);
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        delay(r, 2);
+        if(legoLightSensor.getLightDetected() < lightLevel) {
+            leftMotor.setPower(1);
+            rightMotor.setPower(1);
+            delay(r, 0.5);
+            leftMotor.setPower(0);
+            rightMotor.setPower(0);
+        }
+        delay(r, 2);
+        ru.reset();
+        while(opModeIsActive() && ru.seconds() < 4.4) {
+            beacon_presser.setPosition(0.54);
+            delay(r, 0.4);
+            beacon_presser.setPosition(0.02);
+            delay(r, 0.4);
+        }
+        beacon_presser.setPosition(0.94);
+        delay(r, 0.4);
+
+
+    }
+    public void delay(ElapsedTime runtime, double seconds) {
+        runtime.reset();
+        while(opModeIsActive() && runtime.seconds() < seconds) {}
     }
 }

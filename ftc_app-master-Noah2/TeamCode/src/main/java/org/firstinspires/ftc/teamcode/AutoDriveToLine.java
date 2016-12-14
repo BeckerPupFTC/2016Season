@@ -141,14 +141,15 @@ public class AutoDriveToLine extends LinearOpMode {
         double lightLevel = legoLightSensor.getLightDetected();
         leftMotor.setPower(-1);
         rightMotor.setPower(-1);
-        delay(r, 0.5);
+        delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
         delay(r, 2);
         if(legoLightSensor.getLightDetected() < lightLevel) {
+            beacon_presser.setPosition(0.54);
             leftMotor.setPower(1);
             rightMotor.setPower(1);
-            delay(r, 0.5);
+            delay(r, 0.4);
             leftMotor.setPower(0);
             rightMotor.setPower(0);
         }

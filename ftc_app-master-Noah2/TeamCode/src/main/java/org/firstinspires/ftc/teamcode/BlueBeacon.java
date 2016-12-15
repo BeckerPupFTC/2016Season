@@ -64,9 +64,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="RedBeacon", group="Beacon")
+@Autonomous(name="BlueBeacon", group="Beacon")
 //@Disabled
-public class RedBeacon extends LinearOpMode {
+public class BlueBeacon extends LinearOpMode {
 
     /* Declare OpMode members. */
     DcMotor rightMotor;

@@ -52,8 +52,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 
-@Autonomous(name="AutoLaunchShortRedDrive",group="Autonomous")
-@Disabled
+@Autonomous(name="AutoLaunchShortRedDrive",group="AutoLaunchShort")
+//@Disabled
 public class AutoLaunchShortRedDrive extends LinearOpMode {
    
 	 //initialization

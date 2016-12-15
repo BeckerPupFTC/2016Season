@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoLaunchRedDrive",group="Autonomous")
+@Autonomous(name="AutoLaunchRedDrive",group="AutoLaunch")
 
 public class AutoLaunchRedDrive extends LinearOpMode {
    

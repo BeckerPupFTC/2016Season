@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="AutoLaunchShort",group="Autonomous")
+@Autonomous(name="AutoLaunchShort",group="AutoLaunch")
 //@Disabled
 public class AutoLaunchShort extends LinearOpMode {
    

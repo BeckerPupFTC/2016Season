@@ -70,10 +70,16 @@ public class WallFollower extends LinearOpMode {
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // wait for the start button to be pressed
-        waitForStart();
+        while (!(isStarted() || isStopRequested())) {
 
-        wheelL.setPower(0.2);
-        wheelR.setPower(0.2);
+            // Display the light level while we are waiting to start
+            telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
+            telemetry.update();
+            idle();
+        }
+
+        wheelL.setPower(0.4);
+        wheelR.setPower(0.4);
 
         double distanceThen;
         double distanceNow = 0;
@@ -86,17 +92,21 @@ public class WallFollower extends LinearOpMode {
             telemetry.addData("previously:", distanceThen);
             telemetry.addData("power: ", wheelR.getPower());
             telemetry.update();
-            if(distanceNow < 13.5) {
-                if (distanceNow < distanceThen) {
-                    level = level + 0.01;
+            if(distanceNow < 13) {
+                if (distanceNow == distanceThen) {
+                    level = level + 0.001;
                 }
-            } else if(distanceNow > 14.5) {
-                if (distanceNow > distanceThen) {
-                    level = level - 0.01;
+            } else if(distanceNow > 15) {
+                if (distanceNow == distanceThen) {
+                    if(level < 0.15) {
+                        level = level + 0.002;
+                    } else {
+                        level = level - 0.002;
+                    }
                 }
             }
             wheelR.setPower(level);
-            sleep(10);
+            sleep(15);
         }
     }
 }

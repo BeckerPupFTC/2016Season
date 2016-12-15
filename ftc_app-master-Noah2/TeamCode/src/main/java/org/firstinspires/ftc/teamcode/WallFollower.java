@@ -72,7 +72,7 @@ public class WallFollower extends LinearOpMode {
         // wait for the start button to be pressed
         waitForStart();
 
-        wheelL.setPower(0.25);
+        wheelL.setPower(0.4);
         wheelR.setPower(0.2);
 
         double distanceThen;
@@ -84,7 +84,7 @@ public class WallFollower extends LinearOpMode {
             distanceNow = rangeSensor.getUltrasonicLevel();
             telemetry.addData("distance: ", distanceNow);
             telemetry.addData("previously:", distanceThen);
-            telemetry.addData("power: ", wheelL.getPower());
+            telemetry.addData("power: ", wheelR.getPower());
             telemetry.update();
             if(distanceNow < 13.5) {
                 if (distanceNow < distanceThen) {

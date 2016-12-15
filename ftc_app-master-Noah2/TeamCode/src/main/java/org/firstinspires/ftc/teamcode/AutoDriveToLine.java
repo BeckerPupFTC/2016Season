@@ -129,8 +129,16 @@ public class AutoDriveToLine extends LinearOpMode {
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
-        leftMotor.setPower(0.48);
+        leftMotor.setPower(0.8);
+        rightMotor.setPower(0.8);
+        delay(r, 3.78);
+        leftMotor.setPower(0);
+        delay(r, 0.7);
+
+        leftMotor.setPower(0.32);
         rightMotor.setPower(0.4);
+
+        delay(r, 1);
 
         double distanceThen;
         double distanceNow = 0;
@@ -172,6 +180,69 @@ public class AutoDriveToLine extends LinearOpMode {
         delay(r, 1);
 
         double lightLevel = legoLightSensor.getLightDetected();
+        leftMotor.setPower(-1);
+        rightMotor.setPower(-1);
+        delay(r, 0.4);
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        delay(r, 1);
+        if(legoLightSensor.getLightDetected() < lightLevel) {
+            beacon_presser.setPosition(0.54);
+            leftMotor.setPower(1);
+            rightMotor.setPower(1);
+            delay(r, 0.3);
+            leftMotor.setPower(0);
+            rightMotor.setPower(0);
+        }
+        delay(r, 1);
+        ru.reset();
+        while(opModeIsActive() && ru.seconds() < 2) {
+            beacon_presser.setPosition(0.54);
+            delay(r, 0.4);
+            beacon_presser.setPosition(0.02);
+            delay(r, 0.4);
+        }
+        beacon_presser.setPosition(0.94);
+        delay(r, 0.4);
+
+        leftMotor.setPower(0.32);
+        rightMotor.setPower(0.4);
+
+        while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
+
+            // Display the light level while we are looking for the line
+
+
+
+            distanceThen = distanceNow;
+            distanceNow = rangeSensor.getUltrasonicLevel();
+            telemetry.addData("distance: ", distanceNow);
+            telemetry.addData("previously:", distanceThen);
+            telemetry.addData("power: ", leftMotor.getPower());
+            telemetry.update();
+            if(distanceNow < 11.5) {
+                if (distanceNow < distanceThen) {
+                    level = level + 0.02;;
+                }
+            } else if(distanceNow > 12.5) {
+                if (distanceNow > distanceThen) {
+                    level = level - 0.02;
+                }
+            }
+            rightMotor.setPower(level);
+            sleep(50);
+            telemetry.addData("Light Level",  lightSensor.getLightDetected());
+            telemetry.update();
+        }
+
+        // Stop all motors
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+
+        beacon_presser.setPosition(0.34);
+        delay(r, 1);
+
+        lightLevel = legoLightSensor.getLightDetected();
         leftMotor.setPower(-1);
         rightMotor.setPower(-1);
         delay(r, 0.4);

@@ -109,7 +109,7 @@ public class TeleOpOld extends OpMode
             //launcher.setPower(0);
         //}
         if (gamepad1.a) {
-            launcher.setPower(-0.5);
+            launcher.setPower(-0.4);
         }
         if (gamepad1.y) {
             launcher.setPower(0);

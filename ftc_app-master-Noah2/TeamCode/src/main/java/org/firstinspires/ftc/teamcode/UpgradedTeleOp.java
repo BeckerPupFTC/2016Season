@@ -132,7 +132,7 @@ public class UpgradedTeleOp extends OpMode
             //launcher.setPower(0);
         //}
         if (gamepad1.a) {
-            launcher.setPower(-0.5);
+            launcher.setPower(-0.4);
         }
         if (gamepad1.y) {
             launcher.setPower(0);
@@ -142,6 +142,12 @@ public class UpgradedTeleOp extends OpMode
         }
         if (gamepad1.dpad_down) {
             intake_servo.setPosition(0);
+        }
+        if (gamepad1.dpad_left) {
+            beacon_presser.setPosition(0.02);
+        }
+        if (gamepad1.dpad_right) {
+            beacon_presser.setPosition(0.98);
         }
         telemetry.addData("light sensor measurement:", legoLightSensor.getLightDetected());
         telemetry.addData("ods measurement:", lightSensor.getLightDetected());

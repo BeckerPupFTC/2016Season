@@ -72,12 +72,12 @@ public class WallFollower extends LinearOpMode {
         // wait for the start button to be pressed
         waitForStart();
 
-        wheelL.setPower(0.4);
+        wheelL.setPower(0.2);
         wheelR.setPower(0.2);
 
         double distanceThen;
         double distanceNow = 0;
-        double level = 0.4;
+        double level = 0.2;
 
         while(opModeIsActive()) {
             distanceThen = distanceNow;
@@ -96,7 +96,7 @@ public class WallFollower extends LinearOpMode {
                 }
             }
             wheelR.setPower(level);
-            sleep(100);
+            sleep(10);
         }
     }
 }

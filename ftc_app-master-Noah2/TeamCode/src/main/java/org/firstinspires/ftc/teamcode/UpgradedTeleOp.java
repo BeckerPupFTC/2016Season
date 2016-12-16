@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.LegacyModule;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
@@ -64,20 +65,24 @@ public class UpgradedTeleOp extends OpMode
     DcMotor wheelL;
     DcMotor intake;
     DcMotor launcher;
-    Servo intake_servo;
-    Servo beacon_presser;
+    Servo intakeServo;
+    Servo beaconPresser;
+    Servo sensorServo;
     LightSensor legoLightSensor;      // Primary LEGO Light sensor,
     OpticalDistanceSensor lightSensor;   // Alternative MR ODS sensor
     UltrasonicSensor rangeSensor;
     LegacyModule board;
+
+    double servoPosition = 0.5;
     @Override
     public void init() {
         wheelR = hardwareMap.dcMotor.get("wheelR");
         wheelL = hardwareMap.dcMotor.get("wheelL");
         intake = hardwareMap.dcMotor.get("launcher");
         launcher = hardwareMap.dcMotor.get("intake");
-        intake_servo =  hardwareMap.servo.get("servo_1");
-        beacon_presser = hardwareMap.servo.get("servo_2");
+        intakeServo =  hardwareMap.servo.get("servo_1");
+        beaconPresser = hardwareMap.servo.get("servo_2");
+        sensorServo = hardwareMap.servo.get("servo_3");
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
 
@@ -138,20 +143,29 @@ public class UpgradedTeleOp extends OpMode
             launcher.setPower(0);
         }
         if (gamepad1.dpad_up) {
-            intake_servo.setPosition(1);
+            intakeServo.setPosition(1);
         }
         if (gamepad1.dpad_down) {
-            intake_servo.setPosition(0);
+            intakeServo.setPosition(0);
         }
         if (gamepad1.dpad_left) {
-            beacon_presser.setPosition(0.02);
+            beaconPresser.setPosition(0.02);
         }
         if (gamepad1.dpad_right) {
-            beacon_presser.setPosition(0.98);
+            beaconPresser.setPosition(0.98);
         }
+        if (gamepad1.right_stick_y > 0.5) {
+            servoPosition += 0.01;
+        }
+        if (gamepad1.right_stick_y < -0.5) {
+            servoPosition -= 0.01;
+        }
+        sensorServo.setPosition(servoPosition);
+
         telemetry.addData("light sensor measurement:", legoLightSensor.getLightDetected());
         telemetry.addData("ods measurement:", lightSensor.getLightDetected());
         telemetry.addData("ultrasonic measurement: ", rangeSensor.getUltrasonicLevel());
+        telemetry.addData("sensor servo position: ", sensorServo.getPosition());
         telemetry.update();
     }
 }

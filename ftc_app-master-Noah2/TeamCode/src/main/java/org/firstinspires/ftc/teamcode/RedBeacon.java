@@ -281,3 +281,6 @@ public class RedBeacon extends LinearOpMode {
         while(opModeIsActive() && runtime.seconds() < seconds) {}
     }
 }
+//sensor servo
+//0.7 = out
+//0.42 = part out

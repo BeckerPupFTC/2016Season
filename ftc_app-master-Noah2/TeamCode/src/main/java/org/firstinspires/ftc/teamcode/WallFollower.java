@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.LegacyModule;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 /**
@@ -59,15 +60,23 @@ public class WallFollower extends LinearOpMode {
 
     DcMotor wheelL;
     DcMotor wheelR;
+    Servo sensorServo;
+    Servo beaconPresser;
 
     @Override public void runOpMode() {
 
         rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
         board = hardwareMap.legacyModule.get("Legacy Module 1");
         board.enable9v(4, true);
+
+        sensorServo = hardwareMap.servo.get("servo_3");
+        beaconPresser = hardwareMap.servo.get("servo_2");
+
         wheelL = hardwareMap.dcMotor.get("wheelL");
         wheelR = hardwareMap.dcMotor.get("wheelR");
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);
+        sensorServo.setPosition(0.6);
+        beaconPresser.setPosition(0.94);
 
         // wait for the start button to be pressed
         while (!(isStarted() || isStopRequested())) {
@@ -92,16 +101,19 @@ public class WallFollower extends LinearOpMode {
             telemetry.addData("previously:", distanceThen);
             telemetry.addData("power: ", wheelR.getPower());
             telemetry.update();
-            if(distanceNow < 13) {
-                if (distanceNow == distanceThen) {
-                    level = level + 0.001;
+            if(distanceNow < 14) {
+                if (distanceNow < distanceThen) {
+                    level = level + 0.003;
                 }
-            } else if(distanceNow > 15) {
-                if (distanceNow == distanceThen) {
+                if (distanceNow > distanceThen){
+                    level = level - 0.002;
+                }
+            } else if(distanceNow > 16) {
+                if (distanceNow > distanceThen) {
                     if(level < 0.15) {
-                        level = level + 0.002;
+                        level = level + 0.001;
                     } else {
-                        level = level - 0.002;
+                        level = level - 0.005;
                     }
                 }
             }

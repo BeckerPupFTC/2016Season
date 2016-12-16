@@ -128,8 +128,8 @@ public class BlueBeacon extends LinearOpMode {
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
-        leftMotor.setPower(0.84);
-        rightMotor.setPower(0.8);
+        leftMotor.setPower(-0.8);
+        rightMotor.setPower(-0.84);
         while( opModeIsActive() && (rangeSensor.getUltrasonicLevel() > 18 || rangeSensor.getUltrasonicLevel() < 2)) {
             telemetry.addData("Light Level", lightSensor.getLightDetected());
             telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());

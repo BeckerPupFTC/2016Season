@@ -75,7 +75,7 @@ public class WallFollower extends LinearOpMode {
         wheelL = hardwareMap.dcMotor.get("wheelL");
         wheelR = hardwareMap.dcMotor.get("wheelR");
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);
-        sensorServo.setPosition(0.6);
+        sensorServo.setPosition(0.58);
         beaconPresser.setPosition(0.94);
 
         // wait for the start button to be pressed
@@ -87,8 +87,8 @@ public class WallFollower extends LinearOpMode {
             idle();
         }
 
-        wheelL.setPower(0.4);
-        wheelR.setPower(0.4);
+        wheelL.setPower(0.8);
+        wheelR.setPower(0.88);
 
         double distanceThen;
         double distanceNow = 0;
@@ -101,24 +101,21 @@ public class WallFollower extends LinearOpMode {
             telemetry.addData("previously:", distanceThen);
             telemetry.addData("power: ", wheelR.getPower());
             telemetry.update();
-            if(distanceNow < 14) {
-                if (distanceNow < distanceThen) {
+            if(distanceNow < 17) {
+                if (distanceNow <= distanceThen) {
                     level = level + 0.003;
-                }
-                if (distanceNow > distanceThen){
+                } else {
                     level = level - 0.002;
                 }
-            } else if(distanceNow > 16) {
-                if (distanceNow > distanceThen) {
-                    if(level < 0.15) {
-                        level = level + 0.001;
-                    } else {
-                        level = level - 0.005;
-                    }
+            } else if(distanceNow > 18) {
+                if (distanceNow >= distanceThen) {
+                    level = level - 0.003;
+                } else {
+                    level = level + 0.002;
                 }
             }
             wheelR.setPower(level);
-            sleep(15);
+            sleep(6);
         }
     }
 }

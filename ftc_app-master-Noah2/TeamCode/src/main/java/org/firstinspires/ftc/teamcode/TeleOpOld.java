@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  */
 
 @TeleOp(name="TeleOpOld", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class TeleOpOld extends OpMode
 {
     DcMotor wheelR;

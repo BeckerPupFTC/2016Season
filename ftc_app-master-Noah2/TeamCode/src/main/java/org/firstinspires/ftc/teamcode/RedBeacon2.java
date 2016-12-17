@@ -64,9 +64,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="RedBeacon", group="Beacon")
+@Autonomous(name="RedBeacon2", group="Beacon")
 //@Disabled
-public class RedBeacon extends LinearOpMode {
+public class RedBeacon2 extends LinearOpMode {
 
     /* Declare OpMode members. */
     DcMotor rightMotor;
@@ -104,7 +104,7 @@ public class RedBeacon extends LinearOpMode {
         board.enable9v(4, true);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // get a reference to our Light Sensor object.
@@ -135,7 +135,7 @@ public class RedBeacon extends LinearOpMode {
         // Start the robot moving forward, and then begin looking for a white line.
         leftMotor.setPower(0.88);
         rightMotor.setPower(0.8);
-        while( opModeIsActive() && (rangeSensor.getUltrasonicLevel() > 15 || rangeSensor.getUltrasonicLevel() < 2)) {
+        while( opModeIsActive() && (rangeSensor.getUltrasonicLevel() > 13 || rangeSensor.getUltrasonicLevel() < 2)) {
             telemetry.addData("Light Level", lightSensor.getLightDetected());
             telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.update();
@@ -145,7 +145,7 @@ public class RedBeacon extends LinearOpMode {
 
         delay(r, 0.4);
 
-        while (opModeIsActive() && (rangeSensor.getUltrasonicLevel() < 18 || rangeSensor.getUltrasonicLevel() == 0)) {
+        while (opModeIsActive() && (rangeSensor.getUltrasonicLevel() < 14 || rangeSensor.getUltrasonicLevel() == 0)) {
             telemetry.addData("Light Level: ",lightSensor.getLightDetected());
             telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.update();
@@ -154,36 +154,10 @@ public class RedBeacon extends LinearOpMode {
         leftMotor.setPower(0.8);
         rightMotor.setPower(0.8);
 
-        double distanceThen;
-        double distanceNow = 0;
-        double level = 0.4;
-
         // run until the white line is seen OR the driver presses STOP;
         while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
 
-            // Display the light level while we are looking for the line
-
-            distanceThen = distanceNow;
-            distanceNow = rangeSensor.getUltrasonicLevel();
-            telemetry.addData("distance: ", distanceNow);
-            telemetry.addData("previously:", distanceThen);
-            telemetry.addData("power: ", rightMotor.getPower());
-            telemetry.update();
-            if(distanceNow < 17) {
-                if (distanceNow <= distanceThen) {
-                    level = level + 0.003;
-                } else {
-                    level = level - 0.002;
-                }
-            } else if(distanceNow > 18) {
-                if (distanceNow >= distanceThen) {
-                    level = level - 0.003;
-                } else {
-                    level = level + 0.002;
-                }
-            }
-            rightMotor.setPower(level);
-            sleep(6);
+            telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.addData("Light Level",  lightSensor.getLightDetected());
             telemetry.update();
         }
@@ -193,15 +167,15 @@ public class RedBeacon extends LinearOpMode {
         rightMotor.setPower(0);
 
         beaconPresser.setPosition(0.3);
-        delay(r, 1);
+        delay(r, 0.4);
 
-        double lightLevel = legoLightSensor.getLightDetected();
+        double lightLevel = legoLightSensor.getLightDetected() - 0.01;
         leftMotor.setPower(-1);
         rightMotor.setPower(-1);
         delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-        delay(r, 1);
+        delay(r, 0.2);
         if(legoLightSensor.getLightDetected() < lightLevel) {
             beaconPresser.setPosition(0.54);
             leftMotor.setPower(1);
@@ -210,7 +184,7 @@ public class RedBeacon extends LinearOpMode {
             leftMotor.setPower(0);
             rightMotor.setPower(0);
         }
-        delay(r, 1);
+
         ru.reset();
         while(opModeIsActive() && ru.seconds() < 2) {
             beaconPresser.setPosition(0.54);
@@ -229,27 +203,7 @@ public class RedBeacon extends LinearOpMode {
         while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
 
             // Display the light level while we are looking for the line
-            distanceThen = distanceNow;
-            distanceNow = rangeSensor.getUltrasonicLevel();
-            telemetry.addData("distance: ", distanceNow);
-            telemetry.addData("previously:", distanceThen);
-            telemetry.addData("power: ", rightMotor.getPower());
-            telemetry.update();
-            if(distanceNow < 17) {
-                if (distanceNow <= distanceThen) {
-                    level = level + 0.003;
-                } else {
-                    level = level - 0.002;
-                }
-            } else if(distanceNow > 18) {
-                if (distanceNow >= distanceThen) {
-                    level = level - 0.003;
-                } else {
-                    level = level + 0.002;
-                }
-            }
-            rightMotor.setPower(level);
-            sleep(6);
+            telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.addData("Light Level",  lightSensor.getLightDetected());
             telemetry.update();
         }
@@ -259,7 +213,7 @@ public class RedBeacon extends LinearOpMode {
         rightMotor.setPower(0);
 
         beaconPresser.setPosition(0.44);
-        delay(r, 1);
+        delay(r, 0.4);
 
         lightLevel = legoLightSensor.getLightDetected();
         leftMotor.setPower(-1);
@@ -267,7 +221,7 @@ public class RedBeacon extends LinearOpMode {
         delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
-        delay(r, 1);
+        delay(r, 0.2);
         if(legoLightSensor.getLightDetected() < lightLevel) {
             beaconPresser.setPosition(0.54);
             leftMotor.setPower(1);
@@ -276,7 +230,6 @@ public class RedBeacon extends LinearOpMode {
             leftMotor.setPower(0);
             rightMotor.setPower(0);
         }
-        delay(r, 1);
         ru.reset();
         while(opModeIsActive() && ru.seconds() < 2) {
             beaconPresser.setPosition(0.54);

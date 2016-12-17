@@ -88,7 +88,7 @@ public class AutoLaunchVoltage extends LinearOpMode {
 
         waitForStart();
 
-        launcher.setPower(getVPower());
+        launcher.setPower(getVPower() - 0.04);
 
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 6)) {
@@ -98,12 +98,12 @@ public class AutoLaunchVoltage extends LinearOpMode {
         intake_servo.setPosition(1);
 
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 6)) {
+        while (opModeIsActive() && (runtime.seconds() < 4)) {
             telemetry.addLine("launching");
         }
 
         intake.setPower(0.5);
-        launcher.setPower(((getVPower()-0.01)));
+        launcher.setPower(((getVPower() + 0.01)));
 
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 6)) {
@@ -115,7 +115,7 @@ public class AutoLaunchVoltage extends LinearOpMode {
     }
     public double getVPower() {
         double voltage = hardwareMap.voltageSensor.get("Motor Controller 1").getVoltage();
-        double function = (1/voltage)*4;//rough approximation
+        double function = (-(1/java.lang.Math.pow(voltage, 1.1) * 4.8));//rough approximation
         return function;
     }
 

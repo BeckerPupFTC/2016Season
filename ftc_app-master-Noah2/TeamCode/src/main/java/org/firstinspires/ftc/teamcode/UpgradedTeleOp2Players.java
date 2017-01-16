@@ -135,16 +135,16 @@ public class UpgradedTeleOp2Players extends OpMode
             //}
             //launcher.setPower(0);
         //}
-        if (gamepad2.a) {
-            launcher.setPower(-0.42);
+        if (gamepad1.a) {
+            launcher.setPower(-0.32);
         }
-        if (gamepad2.y) {
+        if (gamepad1.y) {
             launcher.setPower(0);
         }
-        if (gamepad2.dpad_up) {
+        if (gamepad2.a) {
             intakeServo.setPosition(1);
         }
-        if (gamepad2.dpad_down) {
+        if (gamepad2.y) {
             intakeServo.setPosition(0);
         }
         if (gamepad2.dpad_left) {

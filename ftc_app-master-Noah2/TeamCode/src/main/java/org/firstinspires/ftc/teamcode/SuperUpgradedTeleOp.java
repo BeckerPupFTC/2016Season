@@ -47,12 +47,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
  * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
@@ -61,7 +55,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 
 @TeleOp(name="SuperUpgradedTeleOp", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-@Disabled
+//@Disabled
 public class SuperUpgradedTeleOp extends LinearOpMode
 {
     DcMotor wheelR;
@@ -77,7 +71,6 @@ public class SuperUpgradedTeleOp extends LinearOpMode
     LegacyModule board;
     ElapsedTime runtime;
 
-    double servoPosition = 0.5;
     @Override
     public void runOpMode() {
         wheelR = hardwareMap.dcMotor.get("wheelR");
@@ -93,6 +86,8 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         board = hardwareMap.legacyModule.get("Legacy Module 1");
         board.enable9v(4, true);
 
+        rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
+
         runtime = new ElapsedTime();
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -106,21 +101,30 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         // turn on LED of light sensor.
         lightSensor.enableLed(true);
 
+        sensorServo.setPosition(0);
+        beaconPresser.setPosition(0.94);
+
         waitForStart();
+
+        intake.setPower(0.5);
         //wheels
         while (opModeIsActive()) {
 
             check();
             //shooter
             if (gamepad1.a) {
-                launcher.setPower(-0.42);
+                launcher.setPower(-0.36);
                 runtime.reset();
                 while(opModeIsActive() && runtime.seconds() < 3) {
                     check();
                 }
+                intakeServo.setPosition(1);
+                runtime.reset();
+                while (opModeIsActive() && runtime.seconds() < 2) {
+                    check();
+                }
                 wheelL.setPower(0);
                 wheelR.setPower(0);
-                intakeServo.setPosition(1);
                 runtime.reset();
                 while (opModeIsActive() && runtime.seconds() < 3) {}
                 intakeServo.setPosition(0);
@@ -129,12 +133,6 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         }
     }
     public void check() {
-        if (gamepad1.x) {
-            intake.setPower(0.5);
-        }
-        if (gamepad1.b) {
-            intake.setPower(0);
-        }
         float throttle = -gamepad1.left_stick_y;
         float direction = -gamepad1.left_stick_x;
         float right = throttle - direction;
@@ -148,15 +146,6 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         if (gamepad1.dpad_right) {
             beaconPresser.setPosition(0.98);
         }
-
-        if (gamepad1.right_stick_y > 0.5) {
-            servoPosition += 0.01;
-        }
-        if (gamepad1.right_stick_y < -0.5) {
-            servoPosition -= 0.01;
-        }
-
-        sensorServo.setPosition(servoPosition);
 
         telemetry.addData("light sensor measurement:", legoLightSensor.getLightDetected());
         telemetry.addData("ods measurement:", lightSensor.getLightDetected());

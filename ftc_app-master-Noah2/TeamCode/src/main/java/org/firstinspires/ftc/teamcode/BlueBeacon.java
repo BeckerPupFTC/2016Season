@@ -43,27 +43,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-/**
- * This file illustrates the concept of driving up to a line and then stopping.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is structured as a LinearOpMode
- *
- * The code shows using two different light sensors:
- *   The Primary sensor shown in this code is a legacy NXT Light sensor (called "sensor_light")
- *   Alternative "commented out" code uses a MR Optical Distance Sensor (called "sensor_ods")
- *   instead of the LEGO sensor.  Chose to use one sensor or the other.
- *
- *   Setting the correct WHITE_THRESHOLD value is key to stopping correctly.
- *   This should be set half way between the light and dark values.
- *   These values can be read on the screen once the OpMode has been INIT, but before it is STARTED.
- *   Move the sensor on and off the white line and not the min and max readings.
- *   Edit this code to make WHITE_THRESHOLD half way between the min and max.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
 @Autonomous(name="BlueBeacon", group="Beacon")
 //@Disabled
 public class BlueBeacon extends LinearOpMode {
@@ -87,7 +66,6 @@ public class BlueBeacon extends LinearOpMode {
     ElapsedTime ru = new ElapsedTime();
 
     static final double     WHITE_THRESHOLD = 0.2;  // spans between 0.1 - 0.5 from dark to light
-    static final double     APPROACH_SPEED  = 0.5;
 
     @Override
     public void runOpMode() {
@@ -117,7 +95,7 @@ public class BlueBeacon extends LinearOpMode {
         lightSensor.enableLed(true);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");    //
+        telemetry.addData("Status", "Ready to run");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -132,7 +110,7 @@ public class BlueBeacon extends LinearOpMode {
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
-        leftMotor.setPower(-0.88);
+        leftMotor.setPower(-0.8);
         rightMotor.setPower(-0.8);
         while( opModeIsActive() && (backSensor.getUltrasonicLevel() > 15 || backSensor.getUltrasonicLevel() < 2)) {
             telemetry.addData("Light Level", lightSensor.getLightDetected());
@@ -140,9 +118,10 @@ public class BlueBeacon extends LinearOpMode {
             telemetry.update();
         }
 
-        rightMotor.setPower(0);
+        leftMotor.setPower(0);
         sensorServo.setPosition(0.57);
         backSensor = null;
+
         delay(r, 0.4);
         rangeSensor = hardwareMap.ultrasonicSensor.get("back sensor");
 
@@ -172,7 +151,7 @@ public class BlueBeacon extends LinearOpMode {
         beacon_presser.setPosition(0.3);
         delay(r, 0.4);
 
-        double lightLevel = legoLightSensor.getLightDetected() - 0.01;
+        double lightLevel = legoLightSensor.getLightDetected();
         leftMotor.setPower(1);
         rightMotor.setPower(1);
         delay(r, 0.4);
@@ -198,7 +177,7 @@ public class BlueBeacon extends LinearOpMode {
         beacon_presser.setPosition(0.94);
         delay(r, 0.4);
 
-        leftMotor.setPower(-0.76);
+        leftMotor.setPower(-0.8);
         rightMotor.setPower(-0.8);
 
         delay(r, 1);

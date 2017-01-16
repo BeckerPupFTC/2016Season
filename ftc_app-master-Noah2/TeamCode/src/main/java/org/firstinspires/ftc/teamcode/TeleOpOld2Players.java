@@ -109,7 +109,7 @@ public class TeleOpOld2Players extends OpMode
             //launcher.setPower(0);
         //}
         if (gamepad2.a) {
-            launcher.setPower(-0.4);
+            launcher.setPower(-0.3);
         }
         if (gamepad2.y) {
             launcher.setPower(0);

@@ -110,22 +110,26 @@ public class BlueBeacon extends LinearOpMode {
         }
 
         // Start the robot moving forward, and then begin looking for a white line.
+        sensorServo.setPosition(0.57);
+        beacon_presser.setPosition(0.94);
         leftMotor.setPower(-0.8);
         rightMotor.setPower(-0.8);
-        while( opModeIsActive() && (backSensor.getUltrasonicLevel() > 15 || backSensor.getUltrasonicLevel() < 2)) {
+        while( opModeIsActive() && (backSensor.getUltrasonicLevel() > 29 || backSensor.getUltrasonicLevel() < 2)) {
             telemetry.addData("Light Level", lightSensor.getLightDetected());
             telemetry.addData("distance: ", backSensor.getUltrasonicLevel());
             telemetry.update();
         }
 
         leftMotor.setPower(0);
-        sensorServo.setPosition(0.57);
+
         backSensor = null;
 
-        delay(r, 0.4);
-        rangeSensor = hardwareMap.ultrasonicSensor.get("back sensor");
+        delay(r, 0.44);
+        board.enable9v(4, false);
+        board.enable9v(5, true);
+        rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
 
-        while (opModeIsActive() && (rangeSensor.getUltrasonicLevel() < 14 || rangeSensor.getUltrasonicLevel() == 0)) {
+        while (opModeIsActive() && (rangeSensor.getUltrasonicLevel() > 28 || rangeSensor.getUltrasonicLevel() == 0)) {
             telemetry.addData("Light Level: ",lightSensor.getLightDetected());
             telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.update();
@@ -143,8 +147,14 @@ public class BlueBeacon extends LinearOpMode {
             telemetry.addData("Light Level",  lightSensor.getLightDetected());
             telemetry.update();
         }
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        delay(r, 0.4);
 
         // Stop all motors
+        leftMotor.setPower(1);
+        rightMotor.setPower(1);
+        delay(r, 0.2);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
 
@@ -152,16 +162,21 @@ public class BlueBeacon extends LinearOpMode {
         delay(r, 0.4);
 
         double lightLevel = legoLightSensor.getLightDetected();
-        leftMotor.setPower(1);
-        rightMotor.setPower(1);
+        telemetry.addData("variable lightLevel: ", lightLevel);
+        delay(r, 1);
+        leftMotor.setPower(-1);
+        rightMotor.setPower(-1);
         delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
         delay(r, 1);
-        if(legoLightSensor.getLightDetected() < lightLevel) {
+        double l = legoLightSensor.getLightDetected();
+        telemetry.addData("current reading: ", l);
+        telemetry.update();
+        if(l > lightLevel) {
             beacon_presser.setPosition(0.54);
-            leftMotor.setPower(-1);
-            rightMotor.setPower(-1);
+            leftMotor.setPower(1);
+            rightMotor.setPower(1);
             delay(r, 0.3);
             leftMotor.setPower(0);
             rightMotor.setPower(0);
@@ -192,6 +207,9 @@ public class BlueBeacon extends LinearOpMode {
         }
 
         // Stop all motors
+        leftMotor.setPower(1);
+        rightMotor.setPower(1);
+        delay(r, 0.3);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
 
@@ -199,16 +217,17 @@ public class BlueBeacon extends LinearOpMode {
         delay(r, 0.4);
 
         lightLevel = legoLightSensor.getLightDetected();
-        leftMotor.setPower(1);
-        rightMotor.setPower(1);
+
+        leftMotor.setPower(-1);
+        rightMotor.setPower(-1);
         delay(r, 0.4);
         leftMotor.setPower(0);
         rightMotor.setPower(0);
         delay(r, 1);
-        if(legoLightSensor.getLightDetected() < lightLevel) {
+        if(legoLightSensor.getLightDetected() > lightLevel) {
             beacon_presser.setPosition(0.54);
-            leftMotor.setPower(-1);
-            rightMotor.setPower(-1);
+            leftMotor.setPower(1);
+            rightMotor.setPower(1);
             delay(r, 0.3);
             leftMotor.setPower(0);
             rightMotor.setPower(0);

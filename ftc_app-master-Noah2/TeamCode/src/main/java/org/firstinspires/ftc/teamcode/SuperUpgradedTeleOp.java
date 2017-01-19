@@ -68,6 +68,7 @@ public class SuperUpgradedTeleOp extends LinearOpMode
     LightSensor legoLightSensor;      // Primary LEGO Light sensor,
     OpticalDistanceSensor lightSensor;   // Alternative MR ODS sensor
     UltrasonicSensor rangeSensor;
+    UltrasonicSensor backSensor;
     LegacyModule board;
     ElapsedTime runtime;
 
@@ -85,9 +86,10 @@ public class SuperUpgradedTeleOp extends LinearOpMode
 
         board = hardwareMap.legacyModule.get("Legacy Module 1");
         board.enable9v(4, true);
+        board.enable9v(5, true);
 
         rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
-
+        backSensor = hardwareMap.ultrasonicSensor.get("back sensor");
         runtime = new ElapsedTime();
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -150,6 +152,7 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         telemetry.addData("light sensor measurement:", legoLightSensor.getLightDetected());
         telemetry.addData("ods measurement:", lightSensor.getLightDetected());
         telemetry.addData("ultrasonic measurement: ", rangeSensor.getUltrasonicLevel());
+        telemetry.addData("back ultrasonic measurement: ", backSensor.getUltrasonicLevel());
         telemetry.addData("sensor servo position: ", sensorServo.getPosition());
         telemetry.update();
     }

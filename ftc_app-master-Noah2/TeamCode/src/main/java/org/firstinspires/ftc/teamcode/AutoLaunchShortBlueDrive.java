@@ -62,7 +62,7 @@ public class AutoLaunchShortBlueDrive extends LinearOpMode {
     DcMotor intake;
     DcMotor launcher;
     Servo intake_servo;
-    //Servo beacon_presser;
+    Servo beacon_presser;
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -81,20 +81,20 @@ public class AutoLaunchShortBlueDrive extends LinearOpMode {
         intake = hardwareMap.dcMotor.get("launcher");
         launcher = hardwareMap.dcMotor.get("intake");
         intake_servo =  hardwareMap.servo.get("servo_1");
-        //beacon_presser = hardwareMap.servo.get("servo_2");
+        beacon_presser = hardwareMap.servo.get("servo_2");
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
         waitForStart();
-
+        beacon_presser.setPosition(1);
         //runtime.reset();
         //while (opModeIsActive() && runtime.seconds() < 9.5) {}
         wheelR.setPower(1);
         wheelL.setPower(1);
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 1.2) {}
+        while (opModeIsActive() && runtime.seconds() < 0.8) {}
         wheelL.setPower(0);
         wheelR.setPower(0);
-        launcher.setPower(-0.28);
+        launcher.setPower(-0.3);
 
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 5)) {

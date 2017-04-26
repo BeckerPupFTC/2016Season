@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -58,7 +59,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 */
 
 @TeleOp(name="SuperUpgradedTeleOp2Players", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class SuperUpgradedTeleOp2Players extends LinearOpMode
 {
     DcMotor wheelR;
@@ -103,10 +104,11 @@ public class SuperUpgradedTeleOp2Players extends LinearOpMode
 
         // turn on LED of light sensor.
         lightSensor.enableLed(true);
-        sensorServo.setPosition(0);
-        beaconPresser.setPosition(0.94);
+
 
         waitForStart();
+        sensorServo.setPosition(0);
+        beaconPresser.setPosition(1);
         intake.setPower(0.5);
         //wheels
         while (opModeIsActive()) {
@@ -114,7 +116,7 @@ public class SuperUpgradedTeleOp2Players extends LinearOpMode
             check();
             //shooter
             if (gamepad2.a) {
-                launcher.setPower(-0.3);
+                launcher.setPower(-0.34);
                 runtime.reset();
                 while(opModeIsActive() && runtime.seconds() < 3) {
                     check();
@@ -128,7 +130,9 @@ public class SuperUpgradedTeleOp2Players extends LinearOpMode
                 wheelL.setPower(0);
                 wheelR.setPower(0);
                 runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < 3) {}
+                while (opModeIsActive() && runtime.seconds() < 3) {
+                    check();
+                }
                 intakeServo.setPosition(0);
                 launcher.setPower(0);
             }

@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -58,7 +59,7 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
  */
 
 @TeleOp(name="UpgradedTeleOp", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class UpgradedTeleOp extends OpMode
 {
     DcMotor wheelR;
@@ -101,6 +102,10 @@ public class UpgradedTeleOp extends OpMode
         // turn on LED of light sensor.
         lightSensor.enableLed(true);
 
+    }
+    @Override
+    public void start() {
+        beaconPresser.setPosition(1);
     }
     @Override
     public void loop () {
@@ -149,10 +154,10 @@ public class UpgradedTeleOp extends OpMode
             intakeServo.setPosition(0);
         }
         if (gamepad1.dpad_left) {
-            beaconPresser.setPosition(0.02);
+            beaconPresser.setPosition(0.2);
         }
         if (gamepad1.dpad_right) {
-            beaconPresser.setPosition(0.98);
+            beaconPresser.setPosition(1);
         }
         if (gamepad1.right_stick_y > 0.5) {
             servoPosition += 0.01;

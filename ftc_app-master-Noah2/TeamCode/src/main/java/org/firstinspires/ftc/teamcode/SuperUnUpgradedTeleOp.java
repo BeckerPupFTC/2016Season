@@ -32,9 +32,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.LegacyModule;
@@ -44,8 +44,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 /**
  * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
  * It includes all the skeletal structure that all iterative OpModes contain.
@@ -54,9 +52,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SuperUpgradedTeleOp", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-@Disabled
-public class SuperUpgradedTeleOp extends LinearOpMode
+@TeleOp(name="UpgradedTeleOp", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+//@Disabled
+public class SuperUnUpgradedTeleOp extends LinearOpMode
 {
     DcMotor wheelR;
     DcMotor wheelL;
@@ -64,14 +62,9 @@ public class SuperUpgradedTeleOp extends LinearOpMode
     DcMotor launcher;
     Servo intakeServo;
     Servo beaconPresser;
-    Servo sensorServo;
-    LightSensor legoLightSensor;      // Primary LEGO Light sensor,
-    OpticalDistanceSensor lightSensor;   // Alternative MR ODS sensor
-    UltrasonicSensor rangeSensor;
-    UltrasonicSensor backSensor;
-    LegacyModule board;
+
     ElapsedTime runtime;
-    double servoPosition = 0.5                                                                                 ;
+
 
     @Override
     public void runOpMode() {
@@ -81,33 +74,15 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         launcher = hardwareMap.dcMotor.get("intake");
         intakeServo =  hardwareMap.servo.get("servo_1");
         beaconPresser = hardwareMap.servo.get("servo_2");
-        sensorServo = hardwareMap.servo.get("servo_3");
+
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
-
-        board = hardwareMap.legacyModule.get("Legacy Module 1");
-        board.enable9v(4, true);
-        board.enable9v(5, true);
-
-        rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
-        backSensor = hardwareMap.ultrasonicSensor.get("back sensor");
         runtime = new ElapsedTime();
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // get a reference to our Light Sensor object.
-        legoLightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
-        lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
-
-        // turn on LED of light sensor.
-        lightSensor.enableLed(true);
-
-
-        waitForStart();
-
-        sensorServo.setPosition(0);
         beaconPresser.setPosition(1);
 
 
@@ -140,7 +115,7 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         }
     }
     public void check() {
-        float throttle = -gamepad1.left_stick_y;
+        float throttle = gamepad1.left_stick_y;
         float direction = -gamepad1.left_stick_x;
         float right = throttle - direction;
         float left = throttle + direction;
@@ -154,24 +129,5 @@ public class SuperUpgradedTeleOp extends LinearOpMode
             beaconPresser.setPosition(1);
         }
 
-        telemetry.addData("light sensor measurement:", legoLightSensor.getLightDetected());
-        telemetry.addData("ods measurement:", lightSensor.getLightDetected());
-        telemetry.addData("ultrasonic measurement: ", rangeSensor.getUltrasonicLevel());
-        telemetry.addData("back ultrasonic measurement: ", backSensor.getUltrasonicLevel());
-        telemetry.addData("sensor servo position: ", sensorServo.getPosition());
-        telemetry.update();
-        if (gamepad1.left_trigger > 0.5) {
-            servoPosition -= 0.01;
-            if (servoPosition < 0) {
-                servoPosition = 0;
-            }
-        }
-        if (gamepad1.right_trigger > 0.5) {
-            servoPosition += 0.01;
-            if (servoPosition > 1) {
-                servoPosition = 1;
-            }
-        }
-        sensorServo.setPosition(servoPosition);
     }
 }

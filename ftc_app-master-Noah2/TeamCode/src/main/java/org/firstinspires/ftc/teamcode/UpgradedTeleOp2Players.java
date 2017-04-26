@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -57,7 +58,7 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
  */
 
 @TeleOp(name="UpgradedTeleOp2Players", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class UpgradedTeleOp2Players extends OpMode
 {
     DcMotor wheelR;
@@ -100,6 +101,10 @@ public class UpgradedTeleOp2Players extends OpMode
         // turn on LED of light sensor.
         lightSensor.enableLed(true);
 
+    }
+    @Override
+    public void start() {
+        beaconPresser.setPosition(1);
     }
     @Override
     public void loop () {

@@ -33,8 +33,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.LegacyModule;
@@ -44,19 +44,23 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 /**
+ * This file contains an example of an iterative (Non-Linear) "OpMode".
+ * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
+ * The names of OpModes appear on the menu of the FTC Driver Station.
+ * When an selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
+ *
  * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+*/
 
-@TeleOp(name="SuperUpgradedTeleOp", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="UltraUpgradedTeleOp2Players", group="Iterative Opmode")  // @Autonomous(...) is the other common choice
 @Disabled
-public class SuperUpgradedTeleOp extends LinearOpMode
+public class UltraUpgradedTeleOp2Players extends LinearOpMode
 {
     DcMotor wheelR;
     DcMotor wheelL;
@@ -68,10 +72,10 @@ public class SuperUpgradedTeleOp extends LinearOpMode
     LightSensor legoLightSensor;      // Primary LEGO Light sensor,
     OpticalDistanceSensor lightSensor;   // Alternative MR ODS sensor
     UltrasonicSensor rangeSensor;
-    UltrasonicSensor backSensor;
     LegacyModule board;
     ElapsedTime runtime;
-    double servoPosition = 0.5                                                                                 ;
+    double launcherPower = -0.34;
+    boolean buttonOn = false;
 
     @Override
     public void runOpMode() {
@@ -87,10 +91,9 @@ public class SuperUpgradedTeleOp extends LinearOpMode
 
         board = hardwareMap.legacyModule.get("Legacy Module 1");
         board.enable9v(4, true);
-        board.enable9v(5, true);
 
         rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
-        backSensor = hardwareMap.ultrasonicSensor.get("back sensor");
+
         runtime = new ElapsedTime();
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -104,12 +107,10 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         // turn on LED of light sensor.
         lightSensor.enableLed(true);
 
-
         waitForStart();
 
         sensorServo.setPosition(0);
         beaconPresser.setPosition(1);
-
 
         intake.setPower(0.5);
         //wheels
@@ -117,12 +118,13 @@ public class SuperUpgradedTeleOp extends LinearOpMode
 
             check();
             //shooter
-            if (gamepad1.a) {
-                launcher.setPower(-0.36);
+            if (gamepad2.a) {
+                launcher.setPower(launcherPower);
                 runtime.reset();
                 while(opModeIsActive() && runtime.seconds() < 3) {
                     check();
                 }
+
                 intakeServo.setPosition(1);
                 runtime.reset();
                 while (opModeIsActive() && runtime.seconds() < 2) {
@@ -148,30 +150,27 @@ public class SuperUpgradedTeleOp extends LinearOpMode
         wheelL.setPower(left);
 
         if (gamepad1.dpad_left) {
-            beaconPresser.setPosition(0.2);
+            beaconPresser.setPosition(0.02);
         }
         if (gamepad1.dpad_right) {
-            beaconPresser.setPosition(1);
+            beaconPresser.setPosition(0.98);
         }
-
+        if (gamepad2.b && !buttonOn) {
+            launcherPower += 0.01;
+            buttonOn = true;
+        }
+        if (gamepad2.x && !buttonOn) {
+            launcherPower -= 0.01;
+            buttonOn = true;
+        }
+        if (!gamepad2.b && !gamepad2.x) {
+            buttonOn = false;
+        }
+        telemetry.addData("launcher power: ", -launcherPower);
         telemetry.addData("light sensor measurement:", legoLightSensor.getLightDetected());
         telemetry.addData("ods measurement:", lightSensor.getLightDetected());
         telemetry.addData("ultrasonic measurement: ", rangeSensor.getUltrasonicLevel());
-        telemetry.addData("back ultrasonic measurement: ", backSensor.getUltrasonicLevel());
         telemetry.addData("sensor servo position: ", sensorServo.getPosition());
         telemetry.update();
-        if (gamepad1.left_trigger > 0.5) {
-            servoPosition -= 0.01;
-            if (servoPosition < 0) {
-                servoPosition = 0;
-            }
-        }
-        if (gamepad1.right_trigger > 0.5) {
-            servoPosition += 0.01;
-            if (servoPosition > 1) {
-                servoPosition = 1;
-            }
-        }
-        sensorServo.setPosition(servoPosition);
     }
 }

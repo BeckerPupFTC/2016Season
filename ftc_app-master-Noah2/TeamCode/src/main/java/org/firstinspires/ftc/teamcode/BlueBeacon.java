@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -90,6 +91,7 @@ public class BlueBeacon extends LinearOpMode {
         // get a reference to our Light Sensor object.
         legoLightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
         lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
+        lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
 
         // turn on LED of light sensor.
         lightSensor.enableLed(true);
@@ -109,9 +111,9 @@ public class BlueBeacon extends LinearOpMode {
             idle();
         }
 
-        // Start the robot moving forward, and then begin looking for a white line.
-        sensorServo.setPosition(0.57);
-        beacon_presser.setPosition(0.94);
+
+        sensorServo.setPosition(0.36);
+        beacon_presser.setPosition(1);
         leftMotor.setPower(-0.8);
         rightMotor.setPower(-0.8);
         while( opModeIsActive() && (backSensor.getUltrasonicLevel() > 29 || backSensor.getUltrasonicLevel() < 2)) {
@@ -129,7 +131,7 @@ public class BlueBeacon extends LinearOpMode {
         board.enable9v(5, true);
         rangeSensor = hardwareMap.ultrasonicSensor.get("sensor_ultrasonic");
 
-        while (opModeIsActive() && (rangeSensor.getUltrasonicLevel() > 28 || rangeSensor.getUltrasonicLevel() == 0)) {
+        while (opModeIsActive() && (rangeSensor.getUltrasonicLevel() > 29 || rangeSensor.getUltrasonicLevel() == 0)) {
             telemetry.addData("Light Level: ",lightSensor.getLightDetected());
             telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
             telemetry.update();
@@ -137,6 +139,7 @@ public class BlueBeacon extends LinearOpMode {
 
         leftMotor.setPower(-0.8);
         rightMotor.setPower(-0.8);
+
 
         // run until the white line is seen OR the driver presses STOP;
         while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
@@ -158,7 +161,7 @@ public class BlueBeacon extends LinearOpMode {
         leftMotor.setPower(0);
         rightMotor.setPower(0);
 
-        beacon_presser.setPosition(0.3);
+        beacon_presser.setPosition(0.5);
         delay(r, 0.4);
 
         double lightLevel = legoLightSensor.getLightDetected();
@@ -174,7 +177,7 @@ public class BlueBeacon extends LinearOpMode {
         telemetry.addData("current reading: ", l);
         telemetry.update();
         if(l > lightLevel) {
-            beacon_presser.setPosition(0.54);
+            beacon_presser.setPosition(0.5);
             leftMotor.setPower(1);
             rightMotor.setPower(1);
             delay(r, 0.3);
@@ -186,10 +189,10 @@ public class BlueBeacon extends LinearOpMode {
         while(opModeIsActive() && ru.seconds() < 2) {
             beacon_presser.setPosition(0.54);
             delay(r, 0.4);
-            beacon_presser.setPosition(0.02);
+            beacon_presser.setPosition(0.2);
             delay(r, 0.4);
         }
-        beacon_presser.setPosition(0.94);
+        beacon_presser.setPosition(1);
         delay(r, 0.4);
 
         leftMotor.setPower(-0.8);
@@ -207,6 +210,9 @@ public class BlueBeacon extends LinearOpMode {
         }
 
         // Stop all motors
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        delay(r, 0.3);
         leftMotor.setPower(1);
         rightMotor.setPower(1);
         delay(r, 0.3);
@@ -225,7 +231,7 @@ public class BlueBeacon extends LinearOpMode {
         rightMotor.setPower(0);
         delay(r, 1);
         if(legoLightSensor.getLightDetected() > lightLevel) {
-            beacon_presser.setPosition(0.54);
+            beacon_presser.setPosition(0.6);
             leftMotor.setPower(1);
             rightMotor.setPower(1);
             delay(r, 0.3);
@@ -234,12 +240,12 @@ public class BlueBeacon extends LinearOpMode {
         }
         ru.reset();
         while(opModeIsActive() && ru.seconds() < 2) {
-            beacon_presser.setPosition(0.54);
+            beacon_presser.setPosition(0.6);
             delay(r, 0.4);
-            beacon_presser.setPosition(0.02);
+            beacon_presser.setPosition(0.2);
             delay(r, 0.4);
         }
-        beacon_presser.setPosition(0.94);
+        beacon_presser.setPosition(1);
         delay(r, 0.4);
 
 

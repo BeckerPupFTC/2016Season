@@ -44,6 +44,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -52,7 +53,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="AutoLaunchBlueDrive",group="AutoLaunch")
-
+@Disabled
 public class AutoLaunchBlueDrive extends LinearOpMode {
    
 	 //initialization
@@ -61,7 +62,7 @@ public class AutoLaunchBlueDrive extends LinearOpMode {
     DcMotor intake;
     DcMotor launcher;
     Servo intake_servo;
-    //Servo beacon_presser;
+    Servo beacon_presser;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -78,11 +79,11 @@ public class AutoLaunchBlueDrive extends LinearOpMode {
         intake = hardwareMap.dcMotor.get("launcher");
         launcher = hardwareMap.dcMotor.get("intake");
         intake_servo =  hardwareMap.servo.get("servo_1");
-        //beacon_presser = hardwareMap.servo.get("servo_2");
+        beacon_presser = hardwareMap.servo.get("servo_2");
         wheelL.setDirection(DcMotorSimple.Direction.REVERSE);//This motor is pointing the wrong direction
 
         waitForStart();
-
+        beacon_presser.setPosition(1);
         launcher.setPower(-0.33);
 
         runtime.reset();
@@ -107,6 +108,18 @@ public class AutoLaunchBlueDrive extends LinearOpMode {
         launcher.setPower(0);
         intake_servo.setPosition(0);
         intake.setPower(0);
+
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 6)) {
+            telemetry.addLine("launching");
+        }
+        launcher.setPower(0);
+        intake_servo.setPosition(0);
+        intake.setPower(0);
+        wheelL.setPower(1);
+        wheelR.setPower(1);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 5)){}
     }
 
 }

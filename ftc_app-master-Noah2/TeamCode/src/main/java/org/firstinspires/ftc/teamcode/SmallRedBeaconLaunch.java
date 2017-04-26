@@ -44,9 +44,9 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="RedBeaconLaunch", group="Beacon")
+@Autonomous(name="SmallRedBeaconLaunch", group="Beacon")
 //@Disabled
-public class RedBeacon extends LinearOpMode {
+public class SmallRedBeaconLaunch extends LinearOpMode {
 
     /* Declare OpMode members. */
     DcMotor rightMotor;
@@ -191,59 +191,6 @@ public class RedBeacon extends LinearOpMode {
             delay(r, 0.4);
         }
         beaconPresser.setPosition(1);
-        delay(r, 0.4);
-
-        leftMotor.setPower(0.76);
-        rightMotor.setPower(0.8);
-
-        delay(r, 0.4);
-
-        while (opModeIsActive() && (lightSensor.getLightDetected() < WHITE_THRESHOLD)) {
-
-            telemetry.addData("distance: ", rangeSensor.getUltrasonicLevel());
-            telemetry.addData("Light Level",  lightSensor.getLightDetected());
-            telemetry.update();
-        }
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        beaconPresser.setPosition(0.5);
-        delay(r, 0.4);
-
-
-        leftMotor.setPower(-1);
-        rightMotor.setPower(-1);
-        delay(r, 0.3);
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        delay(r, 0.2);
-
-        lightLevel = legoLightSensor.getLightDetected();
-
-        leftMotor.setPower(1);
-        rightMotor.setPower(1);
-        delay(r, 0.4);
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-
-        delay(r, 0.2);
-        if(legoLightSensor.getLightDetected() < lightLevel) {
-            beaconPresser.setPosition(0.6);
-            leftMotor.setPower(-1);
-            rightMotor.setPower(-1);
-            delay(r, 0.4);
-            leftMotor.setPower(0);
-            rightMotor.setPower(0);
-        }
-
-        ru.reset();
-        while(opModeIsActive() && ru.seconds() < 2) {
-            beaconPresser.setPosition(0.6);
-            delay(r, 0.4);
-            beaconPresser.setPosition(0.2);
-            delay(r, 0.4);
-        }
-        beaconPresser.setPosition(1);
-        delay(r, 0.4);
 
 
 
@@ -253,7 +200,7 @@ public class RedBeacon extends LinearOpMode {
 
         launcher.setPower(-0.33);
 
-        delay(r, 2.4);
+        delay(r, 2);
         rightMotor.setPower(0);
 
         intakeServo.setPosition(1);

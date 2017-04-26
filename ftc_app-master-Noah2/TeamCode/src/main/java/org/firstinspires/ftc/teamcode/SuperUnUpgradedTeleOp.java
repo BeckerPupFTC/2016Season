@@ -128,6 +128,6 @@ public class SuperUnUpgradedTeleOp extends LinearOpMode
         if (gamepad1.dpad_right) {
             beaconPresser.setPosition(1);
         }
-
+        telemetry.addLine("...");
     }
 }

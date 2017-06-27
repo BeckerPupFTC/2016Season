@@ -54,13 +54,14 @@ public class SensorLEGOTouch extends LinearOpMode {
   @Override
   public void runOpMode() {
 
-    // get a reference to our Touch Sensor object.
+    // get a reference to our Light Sensor object.
     touchSensor = hardwareMap.touchSensor.get("sensor_touch");
+    int counter = 0;
 
     // wait for the start button to be pressed.
     waitForStart();
 
-    // while the op mode is active, loop and read the touch sensor.
+    // while the op mode is active, loop and read the light levels.
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
     while (opModeIsActive()) {
 
